@@ -1,42 +1,62 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QHBoxLayout, QWidget, QPushButton, QLabel
 import sys
+from PyQt5.QtCore import pyqtSignal, Qt
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QLabel
 
-class MainWindow(QMainWindow):
+class SecondWindow(QWidget):
+    data_signal = pyqtSignal(str)
+
     def __init__(self):
         super().__init__()
         self.initUI()
 
     def initUI(self):
-        self.setWindowTitle('Layout Example')
-        self.setGeometry(100, 100, 300, 200)
+        self.setWindowTitle('Second Window')
+        self.setGeometry(200, 200, 300, 200)
 
-        main_widget = QWidget(self)
-        self.setCentralWidget(main_widget)
+        layout = QVBoxLayout()
+        self.label = QLabel('Enter some text:', self)
+        layout.addWidget(self.label)
 
-        # 创建垂直布局
-        vbox = QVBoxLayout()
+        self.button = QPushButton('Send Data', self)
+        self.button.clicked.connect(self.send_data)
+        layout.addWidget(self.button)
 
-        # 创建水平布局
-        hbox = QHBoxLayout()
+        self.setLayout(layout)
 
-        # 创建按钮和标签
-        button1 = QPushButton('Button 1', self)
-        button2 = QPushButton('Button 2', self)
-        label = QLabel('Hello, PyQt5!', self)
+    def send_data(self):
+        data = "Hello from Second Window"
+        self.data_signal.emit(data)
+        self.close()
 
-        # 将按钮和标签添加到水平布局中
-        hbox.addWidget(button1)
-        hbox.addWidget(button2)
+class MainWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.initUI()
 
-        # 将标签添加到垂直布局中
-        vbox.addWidget(label)
-        # 将水平布局添加到垂直布局中
-        vbox.addLayout(hbox)
+    def initUI(self):
+        self.setWindowTitle('Main Window')
+        self.setGeometry(100, 100, 400, 300)
 
-        main_widget.setLayout(vbox)
+        layout = QVBoxLayout()
+        self.label = QLabel('No data received', self)
+        layout.addWidget(self.label)
+
+        self.button = QPushButton('Open Second Window', self)
+        self.button.clicked.connect(self.open_second_window)
+        layout.addWidget(self.button)
+
+        self.setLayout(layout)
+
+    def open_second_window(self):
+        self.second_window = SecondWindow()
+        self.second_window.data_signal.connect(self.update_label)
+        self.second_window.show()
+
+    def update_label(self, data):
+        self.label.setText(data)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    main_win = MainWindow()
-    main_win.show()
+    main_window = MainWindow()
+    main_window.show()
     sys.exit(app.exec_())
