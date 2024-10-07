@@ -13,9 +13,9 @@ class MainWindow(QWidget):
         self.initUI()
 
     def initUI(self):
-        self.setWindowTitle('Nested Layout Example')
-        self.setGeometry(100, 100, 500, 500)  # x, y, width, height
-
+        self.setWindowTitle('选择图片')
+        self.setFixedSize(500, 500)  # 固定窗口大小
+        self.move(QApplication.desktop().screen().rect().center() - self.rect().center())  # 居中显示窗口
         # 创建主布局
         main_layout = QVBoxLayout()
 

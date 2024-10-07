@@ -11,7 +11,8 @@ class SecondWindow(QWidget):
 
     def initUI(self):
         self.setWindowTitle('Second Window')
-        self.setGeometry(200, 200, 300, 200)
+        self.setFixedSize(300, 200)
+        self.move(QApplication.desktop().screen().rect().center() - self.rect().center())
 
         layout = QVBoxLayout()
         self.label = QLabel('Enter some text:', self)
